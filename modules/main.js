@@ -7,17 +7,16 @@ class Cross {
   #counter
 
   constructor() {
-    this.lastTime = 0
+    this.lastTime = Date.now().valueOf()
     this.counter = 0
   }
 
   update(currentTime) {
-    //const now = Date.now().valueOf()
     const delta = currentTime - this.lastTime
-    const interval = 1000 / 4
+    const interval = 1000 / 2
 
     if (delta > interval) {
-      this.counter++
+      this.counter += Math.round(delta / interval)
       this.lastTime = currentTime
     }
   }
