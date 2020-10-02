@@ -9,7 +9,7 @@ class Cross {
   #pressedKey
 
   constructor() {
-    this.lastTime = Date.now().valueOf()
+    this.lastTime = window.performance.now()
     this.counter = 0
     this.keysBuffer = []
     this.pressedKey = ['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'][Math.floor(Math.random() * 4)]
@@ -81,5 +81,5 @@ const canvas = new Canvas('canvas', [cross])
 
 
 window.addEventListener("load", function() {
-  new Loop(60, [canvas, cross])
+  new Loop(60, [canvas, cross]).run()
 })
