@@ -8,13 +8,12 @@ class Loop {
   constructor(fps, children) {
     this.children = children
     this.FPS = fps
-    this.lastTime = Date.now().valueOf()
-    this.onLoop = this.onLoop.bind(this)
-    requestAnimationFrame(this.onLoop)
+    this.lastTime = window.performance.now()
+    this.run = this.run.bind(this)
   }
 
-  onLoop() {
-    const now = Date.now().valueOf()
+  run(now) {
+    requestAnimationFrame(this.run)
     const delta = now - this.lastTime
     const interval = 1000 / this.FPS
 
@@ -24,7 +23,6 @@ class Loop {
       })
       this.lastTime = now - (delta - ((delta / interval) | 0) * interval)
     }
-    requestAnimationFrame(this.onLoop)
   }
 
 }
