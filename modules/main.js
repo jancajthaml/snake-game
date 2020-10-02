@@ -5,10 +5,38 @@ class Cross {
 
   #lastTime
   #counter
+  #keysBuffer
+  #pressedKey
 
   constructor() {
     this.lastTime = Date.now().valueOf()
     this.counter = 0
+    this.keysBuffer = []
+    this.pressedKey = ['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'][Math.floor(Math.random() * 4)]
+
+    window.addEventListener('keydown', (event) => {
+      if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.code)) {
+        const index = this.keysBuffer.indexOf(event.code)
+        if (index == -1) {
+          this.keysBuffer.push(event.code)
+        }
+        this.pressedKey = event.code
+      }
+    })
+
+    window.addEventListener('keyup', (event) => {
+      if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.code)) {
+        const index = this.keysBuffer.indexOf(event.code)
+        if (index != -1) {
+          this.keysBuffer.splice(index, 1)
+        }
+        if (this.keysBuffer.length == 0) {
+          this.pressedKey = event.code
+        } else {
+          this.pressedKey = this.keysBuffer[this.keysBuffer.length - 1]
+        }
+      }
+    })
   }
 
   update(currentTime) {
@@ -38,7 +66,7 @@ class Cross {
     buffer.font = 'bold 40px Arial';
     buffer.fillStyle = "red"
 
-    const text = `[${this.counter}]`
+    const text = `[${this.counter} / [${this.keysBuffer.join('+')}] / ${this.pressedKey}]`
 
     const textW = buffer.measureText(text).width
     buffer.fillRect((viewport.width / 2) - textW / 2, (viewport.height / 2) - 22, textW, 42)
