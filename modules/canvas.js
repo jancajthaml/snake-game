@@ -13,7 +13,7 @@ class Canvas {
     this.children = children
     const buffer = document.createElement('canvas')
     this.buffer = buffer.getContext('2d', { alpha: false })
-    const ref = document.getElementById(elemenId);
+    const ref = document.getElementById(elemenId)
     this.screen = ref.getContext('2d', { alpha: false })
     this.pixelRatio = window.devicePixelRatio
     this.render = this.render.bind(this)
@@ -41,7 +41,7 @@ class Canvas {
     }
     this.updating = true
     this.buffer.fillStyle = "white"
-    this.buffer.fillRect(0, 0, this.viewport.width, this.viewport.height);
+    this.buffer.fillRect(0, 0, this.viewport.width, this.viewport.height)
     this.buffer.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0)
     this.children.forEach((child) => {
       child.render(this.viewport, this.buffer)
