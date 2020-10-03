@@ -41,7 +41,7 @@ class Cross {
 
   update(currentTime) {
     const delta = currentTime - this.lastTime
-    const interval = 1000 / 2
+    const interval = 1000 / 1
 
     if (delta > interval) {
       this.counter += Math.round(delta / interval)
@@ -54,9 +54,15 @@ class Cross {
     buffer.lineWidth = 10;
     buffer.strokeStyle = "blue"
 
-    buffer.strokeRect(5, 5, viewport.width-10, viewport.height-10)
-
     buffer.beginPath()
+    buffer.moveTo(5, 5)
+    buffer.lineTo(5, viewport.height-5)
+    buffer.moveTo(5, viewport.height-5)
+    buffer.lineTo(viewport.width-5, viewport.height-5)
+    buffer.moveTo(viewport.width-5, viewport.height-5)
+    buffer.lineTo(viewport.width-5, 5)
+    buffer.moveTo(viewport.width-5, 5)
+    buffer.lineTo(5, 5)
     buffer.moveTo(0, 0)
     buffer.lineTo(viewport.width, viewport.height)
     buffer.moveTo(viewport.width, 0)
@@ -71,15 +77,13 @@ class Cross {
     const textW = buffer.measureText(text).width
     buffer.fillRect((viewport.width / 2) - textW / 2, (viewport.height / 2) - 22, textW, 42)
     buffer.fillStyle = "black"
-    buffer.fillText(text, (viewport.width / 2) - textW / 2, (viewport.height / 2) + 10);
-
+    buffer.fillText(text, (viewport.width / 2) - textW / 2, (viewport.height / 2) + 10)
   }
 }
 
 const cross = new Cross()
 const canvas = new Canvas('canvas', [cross])
 
-
 window.addEventListener("load", function() {
-  new Loop(60, [canvas, cross]).run()
+  new Loop(30, [canvas, cross]).run()
 })
