@@ -1,5 +1,8 @@
 import Point from './point.js'
 
+const SIZE = 10
+const SPEED = 5
+
 class Snake {
 
   #lastTime
@@ -11,12 +14,12 @@ class Snake {
     this.lastTime = window.performance.now()
 
     this.points = []
-    for (let i = 0 ; i < 1000 ; i++) {
-      this.points.push(new Point(100+i,100))
+    for (let i = 0 ; i < 100 ; i++) {
+      this.points.push(new Point(100+(i*SIZE),100))
     }
 
     this.keysBuffer = []
-    this.lastPressedKey = ['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'][Math.floor(Math.random() * 4)],
+    this.lastPressedKey = 'ArrowDown'
 
     window.addEventListener('keydown', (event) => {
       if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.code)) {
@@ -83,7 +86,7 @@ class Snake {
         const head = this.points[this.points.length-1]
         const tail = this.points.shift()
         tail.x = head.x
-        tail.y = head.y - 1
+        tail.y = head.y - SIZE
         this.points.push(tail)
         break
       }
@@ -91,14 +94,14 @@ class Snake {
         const head = this.points[this.points.length-1]
         const tail = this.points.shift()
         tail.x = head.x
-        tail.y = head.y + 1
+        tail.y = head.y + SIZE
         this.points.push(tail)
         break
       }
       case 'ArrowLeft' : {
         const head = this.points[this.points.length-1]
         const tail = this.points.shift()
-        tail.x = head.x - 1
+        tail.x = head.x - SIZE
         tail.y = head.y
         this.points.push(tail)
         break
@@ -106,7 +109,7 @@ class Snake {
       case 'ArrowRight' : {
         const head = this.points[this.points.length-1]
         const tail = this.points.shift()
-        tail.x = head.x + 1
+        tail.x = head.x + SIZE
         tail.y = head.y
         this.points.push(tail)
         break
@@ -119,7 +122,7 @@ class Snake {
 
   update(currentTime) {
     const delta = currentTime - this.lastTime
-    const interval = 1000 / 50
+    const interval = 1000 / SPEED
 
     if (delta > interval) {
       this.updateDirection()
@@ -129,9 +132,11 @@ class Snake {
   }
 
   render(viewport, buffer) {
-    buffer.lineCap = "round";
-    buffer.lineWidth = 1;
-    buffer.strokeStyle = "blue"
+    buffer.lineCap = "round"
+    buffer.lineJoin = "round"
+
+    buffer.lineWidth = SIZE
+    buffer.strokeStyle = "green"
 
     buffer.beginPath()
 
@@ -141,12 +146,17 @@ class Snake {
     this.points.forEach((point) => {
       buffer.lineTo(point.x, point.y)
     })
-
-    buffer.strokeStyle = "red"
-    const lastPoint = this.points[this.points.length-1]
-    buffer.lineTo(lastPoint.x, lastPoint.y)
-
     buffer.stroke()
+
+    buffer.strokeStyle = "white"
+    buffer.lineWidth = SIZE - 2
+
+    const lastPoint = this.points[this.points.length-1]
+    buffer.beginPath()
+    buffer.moveTo(lastPoint.x, lastPoint.y)
+    buffer.lineTo(lastPoint.x, lastPoint.y)
+    buffer.stroke()
+
   }
 
 }
