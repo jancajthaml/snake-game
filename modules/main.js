@@ -5,7 +5,6 @@ class Cross {
 
   #lastTime
   #counter
-  //#pressedKeys
   #lastPressedKey
   #keysBuffer
 
@@ -101,9 +100,9 @@ class Cross {
     buffer.stroke()
 
     buffer.font = 'bold 40px Arial';
-    buffer.fillStyle = "red"
+    buffer.fillStyle = "orange"
 
-    const text = `[${this.counter} / [${this.keysBuffer.join('+')}] / ${this.lastPressedKey}]`
+    const text = `{${this.counter} / [${this.keysBuffer.join('+')}] / ${this.lastPressedKey}}`
 
     const textW = buffer.measureText(text).width
     buffer.fillRect((viewport.width / 2) - textW / 2, (viewport.height / 2) - 22, textW, 42)
@@ -116,5 +115,5 @@ const cross = new Cross()
 const canvas = new Canvas('canvas', [cross])
 
 window.addEventListener("load", function() {
-  new Loop(60, [canvas, cross]).run()
+  new Loop(30, [canvas, cross]).run()
 })
