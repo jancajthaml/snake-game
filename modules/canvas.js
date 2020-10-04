@@ -1,6 +1,5 @@
 import Rectangle from './rectangle.js'
 
-
 class Canvas {
 
   #screen
@@ -18,7 +17,7 @@ class Canvas {
     this.buffer = buffer.getContext('2d', { alpha: false, desynchronized: true })
     const ref = document.getElementById(elemenId)
     this.screen = ref.getContext('2d', { alpha: false, desynchronized: false })
-    this.pixelRatio = window.devicePixelRatio // 40
+    this.pixelRatio = window.devicePixelRatio
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
     this.viewport = new Rectangle()
@@ -51,8 +50,8 @@ class Canvas {
       this.viewport.height = this.resizeEvent.height / this.pixelRatio
       this.resizeEvent = null
     }
-    this.buffer.fillStyle = "white"
     this.buffer.setTransform(this.pixelRatio, 0, 0, this.pixelRatio, 0, 0)
+    this.buffer.fillStyle = "white"
     this.buffer.fillRect(0, 0, this.viewport.width, this.viewport.height)
     this.children.forEach((child) => {
       child.render(this.viewport, this.buffer)
