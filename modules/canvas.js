@@ -52,11 +52,12 @@ class Canvas {
     if (this.resizeEvent) {
       this.buffer.canvas.width = this.resizeEvent.width
       this.buffer.canvas.height = this.resizeEvent.height
-      this.viewport.width = this.resizeEvent.width / this.pixelRatio / PIXEL_SIZE
-      this.viewport.height = this.resizeEvent.height / this.pixelRatio / PIXEL_SIZE
+      this.viewport.width = Math.round(this.resizeEvent.width / this.pixelRatio / PIXEL_SIZE)
+      this.viewport.height = Math.round(this.resizeEvent.height / this.pixelRatio / PIXEL_SIZE)
       this.resizeEvent = null
     }
     this.buffer.imageSmoothingEnabled = false
+    // FIXME calculate translate to center
     this.buffer.setTransform(this.pixelRatio * PIXEL_SIZE, 0, 0, this.pixelRatio * PIXEL_SIZE, 0, 0)
     this.buffer.fillStyle = "white"
     this.buffer.fillRect(0, 0, this.viewport.width, this.viewport.height)
