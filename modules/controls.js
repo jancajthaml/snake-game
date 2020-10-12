@@ -18,6 +18,15 @@ class Controls {
         }
       }
     })
+
+    window.addEventListener('keyup', (event) => {
+      if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.code)) {
+        const index = this.keysBuffer.indexOf(event.code)
+        if (index !== -1) {
+          this.keysBuffer = this.keysBuffer.filter((key) => key !== event.code)
+        }
+      }
+    })
   }
 
   updateDirection() {
@@ -92,8 +101,6 @@ class Controls {
       }
 
     }
-
-    this.keysBuffer = []
   }
 
   update(currentTime) {
