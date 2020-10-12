@@ -1,25 +1,29 @@
 import Point from './point.js'
 
-const SIZE = 10
-const SPEED = 5
+const SPEED = 2
 
 class Snake {
 
-  #lastTime
+  #lastTimeRender
+  #lastTimeUpdate
   #points
+  #direction
   #lastPressedKey
   #keysBuffer
 
   constructor() {
-    this.lastTime = window.performance.now()
+    this.lastTimeRender = window.performance.now()
+    this.lastTimeUpdate = Number.MIN_SAFE_INTEGER
 
     this.points = []
-    for (let i = 0 ; i < 100 ; i++) {
-      this.points.push(new Point(100+(i*SIZE),100))
+    // FIXME jump occurs when last is swapped with first
+    for (let i = 0 ; i < 30 ; i++) {
+      this.points.push(new Point(1+i,1))
     }
 
     this.keysBuffer = []
-    this.lastPressedKey = 'ArrowDown'
+    this.lastPressedKey = 'ArrowRight'
+    this.direction = 'right'
 
     window.addEventListener('keydown', (event) => {
       if (['ArrowUp', 'ArrowLeft', 'ArrowDown', 'ArrowRight'].includes(event.code)) {
@@ -32,6 +36,9 @@ class Snake {
   }
 
   updateDirection() {
+    if (this.keysBuffer.length == 0) {
+      return
+    }
     switch (this.lastPressedKey) {
       case undefined: {
         this.lastPressedKey = this.keysBuffer[this.keysBuffer.length - 1]
@@ -76,42 +83,79 @@ class Snake {
 
     }
 
+    switch (this.lastPressedKey) {
+
+      case 'ArrowUp': {
+        this.direction = 'up'
+        break
+      }
+
+      case 'ArrowDown': {
+        this.direction = 'down'
+        break
+      }
+
+      case 'ArrowLeft': {
+        this.direction = 'left'
+        break
+      }
+
+      case 'ArrowRight': {
+        this.direction = 'right'
+        break
+      }
+
+    }
+
     this.keysBuffer = []
   }
 
-  move() {
+  swapHeadAndTail() {
+    const head = this.points[this.points.length-1]
+    const tail = this.points.shift()
+    tail.x = head.x
+    tail.y = head.y
+    this.points.push(tail)
 
-    switch (this.lastPressedKey) {
-      case 'ArrowUp' : {
+    this.points.forEach((point) => {
+      point.x = Math.round(point.x)
+      point.y = Math.round(point.y)
+    })
+  }
+
+  move(speed) {
+    const tail = this.points[0]
+    const tail_s = this.points[1]
+
+    if (tail_s.y < tail.y) {
+      tail.y -= speed
+    } else if (tail_s.y > tail.y) {
+      tail.y += speed
+    } else if (tail_s.x < tail.x) {
+      tail.x -= speed
+    } else if (tail_s.x > tail.x) {
+      tail.x += speed
+    }
+
+    switch (this.direction) {
+      case 'up' : {
         const head = this.points[this.points.length-1]
-        const tail = this.points.shift()
-        tail.x = head.x
-        tail.y = head.y - SIZE
-        this.points.push(tail)
+        head.y -= speed
         break
       }
-      case 'ArrowDown' : {
+      case 'down' : {
         const head = this.points[this.points.length-1]
-        const tail = this.points.shift()
-        tail.x = head.x
-        tail.y = head.y + SIZE
-        this.points.push(tail)
+        head.y += speed
         break
       }
-      case 'ArrowLeft' : {
+      case 'left' : {
         const head = this.points[this.points.length-1]
-        const tail = this.points.shift()
-        tail.x = head.x - SIZE
-        tail.y = head.y
-        this.points.push(tail)
+        head.x -= speed
         break
       }
-      case 'ArrowRight' : {
+      case 'right' : {
         const head = this.points[this.points.length-1]
-        const tail = this.points.shift()
-        tail.x = head.x + SIZE
-        tail.y = head.y
-        this.points.push(tail)
+        head.x += speed
         break
       }
       default: {
@@ -121,40 +165,35 @@ class Snake {
   }
 
   update(currentTime) {
-    const delta = currentTime - this.lastTime
-    const interval = 1000 / SPEED
+    const delta = (currentTime - this.lastTimeUpdate) * SPEED
+    const frameTime = (currentTime - this.lastTimeRender) / 1e3
+    this.lastTimeRender = currentTime
+    const moveSpeed = frameTime * SPEED
 
-    if (delta > interval) {
+    this.move(moveSpeed)
+
+    if (delta >= 1e3) {
       this.updateDirection()
-      this.move()
-      this.lastTime = currentTime
+      this.swapHeadAndTail()
+      this.lastTimeUpdate = currentTime
     }
+
   }
 
   render(viewport, buffer) {
-    buffer.lineCap = "round"
-    buffer.lineJoin = "round"
+    buffer.lineCap = "square"
+    buffer.lineJoin = "square"
 
-    buffer.lineWidth = SIZE
+    buffer.lineWidth = 0.9
     buffer.strokeStyle = "green"
 
     buffer.beginPath()
 
     const fistPoint = this.points[0]
     buffer.moveTo(fistPoint.x, fistPoint.y)
-
     this.points.forEach((point) => {
       buffer.lineTo(point.x, point.y)
     })
-    buffer.stroke()
-
-    buffer.strokeStyle = "white"
-    buffer.lineWidth = SIZE - 2
-
-    const lastPoint = this.points[this.points.length-1]
-    buffer.beginPath()
-    buffer.moveTo(lastPoint.x, lastPoint.y)
-    buffer.lineTo(lastPoint.x, lastPoint.y)
     buffer.stroke()
 
   }
