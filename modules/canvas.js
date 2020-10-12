@@ -1,6 +1,6 @@
 import Rectangle from './rectangle.js'
 
-const PIXEL_SIZE = 1
+const PIXEL_SIZE = 10
 
 class Canvas {
 
