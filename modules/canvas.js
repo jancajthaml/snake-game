@@ -1,13 +1,12 @@
 import Rectangle from './rectangle.js'
 
-const PIXEL_SIZE = 10
-
 class Canvas {
 
   #screen
   #buffer
   #pixelRatio
   #viewport
+  #scaling
   #updating
   #children
   #resizeEvent
@@ -21,7 +20,8 @@ class Canvas {
     this.pixelRatio = window.devicePixelRatio
     this.render = this.render.bind(this)
     this.onResize = this.onResize.bind(this)
-    this.viewport = new Rectangle(0, 0, this.buffer.canvas.width, this.buffer.canvas.height)
+    this.viewport = new Rectangle(0, 0, 100, 50)
+    this.scaling = new Rectangle(1, 1, 0, 0)
     window.addEventListener('resize', this.onResize)
     this.onResize()
   }
@@ -52,13 +52,24 @@ class Canvas {
     if (this.resizeEvent) {
       this.buffer.canvas.width = this.resizeEvent.width
       this.buffer.canvas.height = this.resizeEvent.height
-      this.viewport.width = Math.round(this.resizeEvent.width / this.pixelRatio / PIXEL_SIZE)
-      this.viewport.height = Math.round(this.resizeEvent.height / this.pixelRatio / PIXEL_SIZE)
       this.resizeEvent = null
+
+      const w = (this.viewport.width * this.pixelRatio)
+      const h = (this.viewport.height * this.pixelRatio)
+
+      const aspectW = Math.abs(this.buffer.canvas.width / (this.viewport.width * this.pixelRatio))
+      const aspectH = Math.abs(this.buffer.canvas.height / (this.viewport.height * this.pixelRatio))
+      const aspect = Math.min(aspectH, aspectW)
+
+      this.scaling.x = this.pixelRatio * aspect,
+      this.scaling.y = this.pixelRatio * aspect
+      this.scaling.width = (this.buffer.canvas.width - (w * aspect)) / 2
+      this.scaling.height = (this.buffer.canvas.height - (h * aspect)) / 2
     }
+
     this.buffer.imageSmoothingEnabled = false
-    // FIXME calculate translate to center
-    this.buffer.setTransform(this.pixelRatio * PIXEL_SIZE, 0, 0, this.pixelRatio * PIXEL_SIZE, 0, 0)
+
+    this.buffer.setTransform(this.scaling.x, 0, 0, this.scaling.y, this.scaling.width, this.scaling.height)
     this.buffer.fillStyle = "white"
     this.buffer.fillRect(0, 0, this.viewport.width, this.viewport.height)
     this.children.forEach((child) => {
