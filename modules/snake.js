@@ -133,18 +133,9 @@ class Snake {
   render(viewport, buffer) {
     this.viewport = viewport
 
-    buffer.lineCap = "square"
-    buffer.lineJoin = "miter"
-
-    buffer.lineWidth = 1
+    buffer.lineWidth = 2
     buffer.strokeStyle = 'black'
-    buffer.beginPath()
-    buffer.moveTo(1, 1)
-    buffer.lineTo(viewport.width-1, 1)
-    buffer.lineTo(viewport.width-1, viewport.height-1)
-    buffer.lineTo(1, viewport.height-1)
-    buffer.closePath()
-    buffer.stroke()
+    buffer.strokeRect(0.5,0.5,viewport.width-1, viewport.height-1)
 
     buffer.lineCap = "square"
     buffer.lineJoin = "miter"
